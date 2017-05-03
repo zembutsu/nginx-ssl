@@ -1,0 +1,49 @@
+version: "3"
+services:
+
+  nginx:
+    image: dev-nginx:alpine
+    build:
+      #context: ./nginx
+      context: .
+      dockerfile: Dockerfile.nginx
+    #deploy:
+    #  replicas: 1
+    #  restart_policy:
+    #    condition: on-failure
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - node-red 
+    networks:
+      internal:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - certbot:/etc/letsencrypt:ro
+
+  node-red:
+    image: nodered/node-red-docker:slim
+    #ports:
+    #  - "1880:1880"
+    networks:
+      internal:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+#  certbot:
+#    image: certbot/certbot
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - certbot:/certbot
+
+networks:
+  internal:
+
+volumes:
+  certbot:
+    external: true
+
+
+ 
